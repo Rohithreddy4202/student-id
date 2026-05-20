@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My ID card</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:white;
+    display:flex;
+    justify-content:center;
+    padding:12px;
+    margin-top:30px;
+}
+
+/* PAGE */
+
+.page{
+    width:100%;
+    max-width:310px;
+}
+
+/* TITLE */
+
+.title{
+    color:#12586a;
+    font-size:14px;
+    margin-bottom:20px;
+    margin-left:10px;
+    display:flex;
+    justify-content:space-between;
+    width:300px;
+}
+
+/* CARD CONTAINER */
+
+.card{
+    width:100%;
+    background:white;
+    border:3px solid #ef2340;
+    border-radius:5px;
+    position:relative;
+    overflow:visible;
+    padding:5px;
+}
+
+/* INFO BUTTON (Stays on top of everything) */
+
+.info-btn{
+    position:absolute;
+    top:-25px;
+    right:12px;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    border:2.5px solid #0a596d; 
+    background:#feffff;
+    color:#0a596d;
+    font-size:22px;
+    font-weight:bold;
+    cursor:pointer;
+    z-index:10000; /* Highest layer index to stay above the popup */
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+    0%{
+        transform:scale(1);
+    }
+    50%{
+        transform:scale(1.08);
+    }
+    100%{
+        transform:scale(1);
+    }
+}
+
+/* MAIN */
+
+.main{
+    display:flex;
+    align-items:stretch;
+}
+
+/* LEFT SIDE */
+
+.left{
+    width:72px;
+    background:#c71b33;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:300px;
+}
+
+.left span{
+    transform:rotate(-90deg);
+    color:white;
+    font-size:30px;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+
+/* RIGHT SIDE */
+
+.right{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin-left:;
+    padding:10px;
+}
+
+/* LOGO */
+
+.logo{
+    width:100%;
+    display:flex;
+    justify-content:center;
+}
+
+.logo img{
+    width:210px;
+    object-fit:contain;
+}
+
+/* PHOTO */
+
+.photo-area{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    margin-top:18px;
+}
+
+.photo{
+    width:210px;
+    height:210px;
+    object-fit:cover;
+}
+
+/* DETAILS */
+
+.details{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin-top:12px;
+}
+
+/* YEAR + NAME */
+
+.row{
+    width:100%;
+    display:flex;
+    margin-top:-12px;
+    gap:20px;
+}
+
+.year{
+    font-size:20px;
+    margin-left:10px;
+}
+
+.name{
+    font-size:18px;
+    font-weight:500;
+    margin-left:30px;
+}
+
+/* BARCODE */
+
+svg{
+    width:200px;
+    height:80px;
+}
+
+/* STUDENT NUMBER */
+
+.student-number{
+    text-align:center;
+    font-size:16px;
+}
+
+/* TRANSIT */
+
+.transit{
+    margin-bottom:10px;
+    display:flex;
+    justify-content:center;
+}
+
+.transit img{
+    width:210px;
+    object-fit:contain;
+}
+
+/* POPUP PANEL (Matches Screenshot perfectly) */
+
+.popup{
+    position:absolute;
+     
+    left:6px;
+    right:6px;
+    top:-3px;
+    background:white;
+    border:2.5px solid #0a596d;
+    border-radius:8px;
+    padding:25px 18px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.15);
+    display:none;
+    z-index:9999; /* Sits right beneath the interactive button */
+    font-size:14px;
+    line-height:1.2;
+    height: auto;
+}
+
+.popup-title{
+    color:#064b5c;
+    font-weight:300px;
+    margin-bottom:4px;
+    font-size:17px;
+}
+
+.info-row{
+    display:flex;
+    justify-content:space-between;
+    margin-top:8px;
+    color: #111;
+}
+
+/* BLURRED BACKGROUND OVERLAY */
+
+.body-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.3); /* Soft white tint */
+    backdrop-filter: blur(5px);            /* Frosted glass effect */
+    -webkit-backdrop-filter: blur(5px);    /* Safari Support */
+    display: none;
+    z-index: 9998;                         /* Behind popup layout */
+}
+
+/* MOBILE RESPONSIVENESS */
+
+@media(max-width:360px){
+    .left{
+        width:65px;
+    }
+
+    .left span{
+        font-size:26px;
+    }
+
+    .logo img{
+        width:190px;
+    }
+
+    .photo{
+        width:190px;
+        height:190px;
+    }
+
+    .transit img{
+        width:190px;
+    }
+
+    .name{
+        font-size:15px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="body-overlay" id="bodyOverlay" onclick="toggleInfo()"></div>
+
+<div class="page">
+
+    <div class="title">
+        <span style="font-size:15px;">&lt;</span>
+        <span style="font-size:15px;font-weight:500;">
+            My ID card
+        </span>
+        <span style="font-size:25px;">
+            &#8942;
+        </span>
+    </div>
+
+    <div class="card">
+
+        <button class="info-btn" id="infoBtn" onclick="toggleInfo()">
+            i
+        </button>
+
+        <div class="popup" id="popup">
+
+            <div class="popup-title">
+                Issued By
+            </div>
+
+            <div style="font-size:15px; margin-bottom: 24px; color: #111;">
+                Canadore College
+            </div>
+
+            <div class="popup-title">
+                Digital ID Validity Period
+            </div>
+
+            <div class="info-row">
+                <span>Issued on</span>
+                <span id="issued"></span>
+            </div>
+
+            <div class="info-row">
+                <span>Downloaded</span>
+                <span id="downloaded"></span>
+            </div>
+
+            <div class="info-row">
+                <span>Refreshes on</span>
+                <span id="refresh"></span>
+            </div>
+
+        </div>
+
+        <div class="main">
+
+            <div class="left">
+                <span>STUDENT</span>
+            </div>
+
+            <div class="right">
+
+                <div class="logo">
+                    <img src="images.png">
+                </div>
+
+                <div class="photo-area">
+                    <img src="mani.png" class="photo">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="details">
+
+            <div class="row">
+                <div class="year">
+                    25/26
+                </div>
+                <div class="name">
+                    Maniraj Gaddam
+                </div>
+            </div>
+
+            <div class="barcode">
+                <svg id="barcode"></svg>
+            </div>
+
+            <div class="student-number">
+                A00197596
+            </div>
+
+            <div class="transit">
+                <img src="download.jpg">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+<script>
+
+/* FORMAT DATE TIME */
+function formatDateTime(date){
+    let options = {
+        month:'short',
+        day:'numeric',
+        year:'numeric',
+        hour:'numeric',
+        minute:'2-digit'
+    };
+    return date.toLocaleString('en-US', options);
+}
+
+/* SET DATES */
+const now = new Date();
+
+const issuedDate = new Date();
+issuedDate.setHours(8);
+issuedDate.setMinutes(47);
+issuedDate.setSeconds(0);
+
+const downloadedDate = new Date();
+
+const refreshDate = new Date();
+refreshDate.setDate(refreshDate.getDate() + 7);
+
+document.getElementById("issued").innerHTML = formatDateTime(issuedDate);
+document.getElementById("downloaded").innerHTML = formatDateTime(downloadedDate);
+document.getElementById("refresh").innerHTML = formatDateTime(refreshDate);
+
+/* TOGGLE POPUP AND BLUR BACKDROP */
+function toggleInfo(){
+    let popup = document.getElementById("popup");
+    let overlay = document.getElementById("bodyOverlay");
+
+    if(popup.style.display === "block"){
+        popup.style.display = "none";
+        overlay.style.display = "none";
+    }else{
+        popup.style.display = "block";
+        overlay.style.display = "block";
+    }
+}
+
+/* RENDER BARCODE */
+JsBarcode("#barcode", "A00197596", {
+    format:"CODE128",
+    lineColor:"#000",
+    width:1.7,
+    height:55,
+    displayValue:false
+});
+
+</script>
+
+</body>
+</html>
